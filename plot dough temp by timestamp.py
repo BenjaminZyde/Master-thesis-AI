@@ -8,15 +8,15 @@ Created on Wed Dec  7 16:49:12 2022
 import matplotlib
 import matplotlib.pyplot as plt
 import datetime
-
+import pandas as pd
 
 #chose valid breadID
-DoughID="DO94"
+DoughID="DO100"
 #chose bread 1 or bread 2
 bread=2 #1/2
 
 #static data for one doughID
-source= "../data/new 3-01/dough_temperatures.csv"
+source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
 ids= "../rearangeddata/new 3-01/ids.csv"
 process= "../rearangeddata/new 3-01/process.csv"
 
@@ -68,72 +68,66 @@ x_list = []
 tempxvalues = []
 xvalue=0
 stage=1
-#get data from csv file
-f = open(source,"r")
-data=f.read()
-data=data.split("\n")
+#get data from pkl
+pf = pd.read_pickle(source)
 
-#delete noncsv values from the csv data
-del data[0]
-del data[-1]
+
 #extract temp from data
-for x in data:
-    x= x.split(";")
-    
-    if (x[4]==DoughID):
-        day= datetime.datetime.strptime(x[7], "%Y-%m-%d %H:%M:%S")
-        hours = datetime.datetime.strptime(x[8], "%H:%M:%S")
-        timevalue= datetime.datetime.strptime(str(day.year)+"-"+str(day.month)+"-"+str(day.day)+" "+str(hours.hour)+":"+str(hours.minute)+":"+str(hours.second), "%Y-%m-%d %H:%M:%S")
-        if (sensorid==x[3] or sensorid==""):
-            if (timevalue<switch1):
-                stage=1
-            elif (timevalue>=switch1 and timevalue<=switch2):
-                if (stage==1):
-                    stage =2
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch2 and timevalue<=switch3):
-                if (stage==2):
-                    stage =4
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch3 and timevalue<=switch4):
-                if (stage==4):
-                    stage =6
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch4 and timevalue<=switch5):
-                if (stage==6):
-                    stage =0
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch5 and timevalue<=switch6):
-                if (stage==0):
-                    stage =7
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]  
-            elif (timevalue>switch6):
-                if (stage==7):
-                    stage =8
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]     
+myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid+"\""
+temps =  pf.query(myquery)
+for x in range (len(temps)): 
+    day= datetime.datetime.strptime(temps['sampling_date'].loc[temps.index[x]], "%Y-%m-%d %H:%M:%S")
+    hours = datetime.datetime.strptime(temps['sampling_time'].loc[temps.index[x]], "%H:%M:%S")
+    timevalue= datetime.datetime.strptime(str(day.year)+"-"+str(day.month)+"-"+str(day.day)+" "+str(hours.hour)+":"+str(hours.minute)+":"+str(hours.second), "%Y-%m-%d %H:%M:%S")
+    if (timevalue<switch1):
+        stage=1
+    elif (timevalue>=switch1 and timevalue<=switch2):
+        if (stage==1):
+            stage =2
+            line_list.append(tempvalues)
+            x_list.append(tempxvalues)
+            tempvalues=[]
+            tempxvalues=[]
+    elif (timevalue>=switch2 and timevalue<=switch3):
+        if (stage==2):
+            stage =4
+            line_list.append(tempvalues)
+            x_list.append(tempxvalues)
+            tempvalues=[]
+            tempxvalues=[]
+    elif (timevalue>=switch3 and timevalue<=switch4):
+        if (stage==4):
+            stage =6
+            line_list.append(tempvalues)
+            x_list.append(tempxvalues)
+            tempvalues=[]
+            tempxvalues=[]
+    elif (timevalue>=switch4 and timevalue<=switch5):
+        if (stage==6):
+            stage =0
+            line_list.append(tempvalues)
+            x_list.append(tempxvalues)
+            tempvalues=[]
+            tempxvalues=[]
+    elif (timevalue>=switch5 and timevalue<=switch6):
+        if (stage==0):
+            stage =7
+            line_list.append(tempvalues)
+            x_list.append(tempxvalues)
+            tempvalues=[]
+            tempxvalues=[]  
+    elif (timevalue>switch6):
+        if (stage==7):
+            stage =8
+            line_list.append(tempvalues)
+            x_list.append(tempxvalues)
+            tempvalues=[]
+            tempxvalues=[]                 
                     
-                    
-                
-            tempvalues.append(float(x[9]))
-            tempxvalues.append(timevalue)               
+                   
+    tempvalues.append(temps['temperature'].loc[temps.index[x]])
+    tempxvalues.append(timevalue)                 
+               
              
         
 try:      
