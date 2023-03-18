@@ -141,11 +141,13 @@ for x in dataids:
             y4.append(max(line_list[5]))
             
             y3.append(max(line_list[3]))
-            y1.append(max(line_list[1]))
+            
             
             y2.append(max(line_list[2]))
-           
-            
+            if (bulkprooftemp==5):
+                y1.append(min(line_list[1]))
+            else:
+                y1.append(max(line_list[1]))
             x1.append(bulkprooftemp)
             x2.append(prooftemp)
             x3.append(finalprooftemp)
@@ -164,7 +166,7 @@ try:
     axs[1, 0].set_title('proof 3')
     axs[1, 1].scatter(x4,y4)
     axs[1, 1].set_title('bake')
-    fig.suptitle('Boxplot sensor 1 and sensor 2')
+    fig.suptitle('Plot theoretical vs real')
     fig.show()
 except:
     print("error in plotting")        

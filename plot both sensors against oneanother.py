@@ -215,7 +215,7 @@ try:
     axs[1, 0].set_title('proof 3')
     axs[1, 1].scatter(x4,y4)
     axs[1, 1].set_title('bake')
-    fig.suptitle('Boxplot sensor 1 and sensor 2')
+    fig.suptitle('Plot sensor 1 and sensor 2')
     fig.show()
 except:
     print("error in plotting")        
