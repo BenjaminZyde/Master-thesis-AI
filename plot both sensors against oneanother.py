@@ -29,10 +29,14 @@ f.close()
 del dataprocess[0]
 del dataprocess[-1]
 
-dif1=[]
-dif2=[]
-dif3=[]
-dif4=[]
+x1=[]
+x2=[]
+x3=[]
+x4=[]
+y1=[]
+y2=[]
+y3=[]
+y4=[]
 #get data from pkl
 pf = pd.read_pickle(source)
 designframe = pd.read_pickle(design)
@@ -189,26 +193,27 @@ for x in dataids:
         baketemp=float(designdata['BAKE_upper_temp'])
         #1-3
         try:       
-            if (bulkprooftemp==5):
-                dif1.append(abs(min(line_list[1])-float(bulkprooftemp)))
-            else:
-                dif1.append(abs(max(line_list[1])-float(bulkprooftemp)))
-            dif2.append(abs(max(line_list[2])-max(line_list2[2])))
-            dif3.append(abs(max(line_list[3])-max(line_list2[3])))
-            dif4.append(abs(max(line_list[5])-max(line_list2[5])))
+            x1.append(max(line_list[1]))
+            y1.append(max(line_list2[1]))
+            x2.append(max(line_list[2]))
+            y2.append(max(line_list2[2]))
+            x3.append(max(line_list[3]))
+            y3.append(max(line_list2[3]))
+            x4.append(max(line_list[5]))
+            y4.append(max(line_list2[5]))
         except:
             print("error in data of DoughID "+DoughID)
 try:
     fig, axs = plt.subplots(2, 2)
     
     
-    axs[0, 0].boxplot(dif1)
+    axs[0, 0].scatter(x1,y1)
     axs[0, 0].set_title('proof 1')
-    axs[0, 1].boxplot(dif2)
+    axs[0, 1].scatter(x2,y2)
     axs[0, 1].set_title('proof 2')
-    axs[1, 0].boxplot(dif3)
+    axs[1, 0].scatter(x3,y3)
     axs[1, 0].set_title('proof 3')
-    axs[1, 1].boxplot(dif4)
+    axs[1, 1].scatter(x4,y4)
     axs[1, 1].set_title('bake')
     fig.suptitle('Boxplot sensor 1 and sensor 2')
     fig.show()

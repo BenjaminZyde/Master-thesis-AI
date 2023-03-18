@@ -9,9 +9,12 @@ import matplotlib
 import matplotlib.pyplot as plt
 import datetime
 import pandas as pd
+from scipy.signal import savgol_filter
+
+
 
 #chose valid breadID
-DoughID="DO100"
+DoughID="DO101"
 #chose bread 1 or bread 2
 bread=2 #1/2
 
@@ -75,10 +78,10 @@ pf = pd.read_pickle(source)
 #extract temp from data
 myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid+"\""
 temps =  pf.query(myquery)
+temps['temperature'] = savgol_filter(temps['temperature'], 50, 5)
 for x in range (len(temps)): 
-    day= datetime.datetime.strptime(temps['sampling_date'].loc[temps.index[x]], "%Y-%m-%d %H:%M:%S")
-    hours = datetime.datetime.strptime(temps['sampling_time'].loc[temps.index[x]], "%H:%M:%S")
-    timevalue= datetime.datetime.strptime(str(day.year)+"-"+str(day.month)+"-"+str(day.day)+" "+str(hours.hour)+":"+str(hours.minute)+":"+str(hours.second), "%Y-%m-%d %H:%M:%S")
+    
+    timevalue= temps.iloc[x]['sampling_moment']
     if (timevalue<switch1):
         stage=1
     elif (timevalue>=switch1 and timevalue<=switch2):

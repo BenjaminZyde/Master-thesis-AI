@@ -69,7 +69,6 @@ for x in dataids:
         del temps['temperature']
         
         temps['temperature'] = line_list0
-        timespandas= pd.DataFrame(x_list)
         for x in range (len(temps)): 
             timevalue= temps.iloc[x]['sampling_moment']
             if (timevalue<switch1):
@@ -114,69 +113,6 @@ for x in dataids:
                     stage =8
                     line_list.append(tempvalues)
                     x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]       
-            tempvalues.append(temps['temperature'].loc[temps.index[x]])
-            tempxvalues.append(timevalue) 
-        
-        
-        line_list2 = []
-        tempvalues = []
-        x_list2 = []
-        tempxvalues = []
-        xvalue=0
-        stage=1
-        myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid2+"\""
-        temps =  pf.query(myquery)
-        temps = temps.reset_index()
-        line_list0 = list(savgol_filter(temps['temperature'], 50, 5))
-        del temps['temperature']
-        temps['temperature'] = line_list0
-        timespandas= pd.DataFrame(x_list)
-        for x in range (len(temps)): 
-            timevalue= temps.iloc[x]['sampling_moment']
-            if (timevalue<switch1):
-                stage=1
-            elif (timevalue>=switch1 and timevalue<=switch2):
-                if (stage==1):
-                    stage =2
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch2 and timevalue<=switch3):
-                if (stage==2):
-                    stage =4
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch3 and timevalue<=switch4):
-                if (stage==4):
-                    stage =6
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch4 and timevalue<=switch5):
-                if (stage==6):
-                    stage =0
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch5 and timevalue<=switch6):
-                if (stage==0):
-                    stage =7
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]  
-            elif (timevalue>switch6):
-                if (stage==7):
-                    stage =8
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
                     tempvalues=[]
                     tempxvalues=[]       
             tempvalues.append(temps['temperature'].loc[temps.index[x]])
@@ -193,9 +129,9 @@ for x in dataids:
                 dif1.append(abs(min(line_list[1])-float(bulkprooftemp)))
             else:
                 dif1.append(abs(max(line_list[1])-float(bulkprooftemp)))
-            dif2.append(abs(max(line_list[2])-max(line_list2[2])))
-            dif3.append(abs(max(line_list[3])-max(line_list2[3])))
-            dif4.append(abs(max(line_list[5])-max(line_list2[5])))
+            dif2.append(abs(max(line_list[2])-float(prooftemp)))
+            dif3.append(abs(max(line_list[3])-float(finalprooftemp)))
+            dif4.append(abs(max(line_list[5])-float(baketemp)))
         except:
             print("error in data of DoughID "+DoughID)
 try:
@@ -210,7 +146,7 @@ try:
     axs[1, 0].set_title('proof 3')
     axs[1, 1].boxplot(dif4)
     axs[1, 1].set_title('bake')
-    fig.suptitle('Boxplot sensor 1 and sensor 2')
+    fig.suptitle('Boxplot sensor 1 and theoretical temp')
     fig.show()
 except:
     print("error in plotting")        

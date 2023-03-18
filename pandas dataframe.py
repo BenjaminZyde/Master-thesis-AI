@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import datetime
 import tsfresh
 import pandas as pd
-
+import datetime
 
 source= "../data/new 3-01/dough_temperatures.csv"
 pickles= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
@@ -20,6 +20,17 @@ del pf['USER']
 del pf['bt_id']
 del pf['request_id']
 del pf['BREP']
+
+days=[]
+for x in range( len(pf)):
+    day= datetime.datetime.strptime(pf['sampling_date'].loc[pf.index[x]], "%Y-%m-%d %H:%M:%S")
+    hours = datetime.datetime.strptime(pf['sampling_time'].loc[pf.index[x]], "%H:%M:%S")
+    timevalue= datetime.datetime.strptime(str(day.year)+"-"+str(day.month)+"-"+str(day.day)+" "+str(hours.hour)+":"+str(hours.minute)+":"+str(hours.second), "%Y-%m-%d %H:%M:%S")   
+    days.append(timevalue)
+del pf['sampling_date']
+del pf['sampling_time']
+
+pf['sampling_moment']=days
 
 
 pf.to_pickle(pickles)
