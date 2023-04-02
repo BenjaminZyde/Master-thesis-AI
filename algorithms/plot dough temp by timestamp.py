@@ -21,18 +21,15 @@ bread=2 #1/2
 
 #static data for one doughID
 source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
-ids= "../rearangeddata/new 3-01/ids.csv"
+ids=  "../rearangeddata/new 3-01/pandas-ids.pkl"
 process= "../rearangeddata/new 3-01/process.csv"
 design = "../rearangeddata/new 3-01/pandas-design.pkl"
 
 structure="%Y-%m-%d %H:%M"
 #read files
-f = open(ids,"r")
-dataids=f.read()
-dataids=dataids.split("\n")
-f.close()
-del dataids[0]
-del dataids[-1]
+dataids= pd.read_pickle(ids)
+dataids = dataids.reset_index()
+
 f = open(process,"r")
 dataprocess=f.read()
 dataprocess=dataprocess.split("\n")
@@ -41,14 +38,12 @@ del dataprocess[0]
 del dataprocess[-1]
 
 #select sensorid
-sensorid=""
-for x in dataids:
-    x=x.split(",")
-    if (DoughID==x[0]):
-        if bread ==1:
-            sensorid=x[4]
-        else:
-            sensorid=x[5]
+myquery="DoughID== \"" +DoughID+ "\""
+temps =  dataids.query(myquery)
+if (bread ==1):
+    sensorid = temps['Sensor1']
+else:
+    sensorid = temps['Sensor2']
 switch1 ="No such dough ID"        
     
 

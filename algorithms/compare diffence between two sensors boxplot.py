@@ -4,200 +4,211 @@ from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
 import numpy as np
 
-def running_mean(x, N):
-    cumsum = np.cumsum(np.insert(x, 0, 0)) 
-    return (cumsum[N:] - cumsum[:-N]) / float(N)
+def nearest(items, pivot):
+    return min(items, key=lambda x: abs(x - pivot))
 
-#static data for one doughID
 source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
-ids= "../rearangeddata/new 3-01/ids.csv"
+ids=  "../rearangeddata/new 3-01/beter-pandas-ids.pkl"
 process= "../rearangeddata/new 3-01/process.csv"
-design= "../rearangeddata/new 3-01/pandas-design.pkl"
+design = "../rearangeddata/new 3-01/pandas-design.pkl"
 
 structure="%Y-%m-%d %H:%M"
 #read files
-f = open(ids,"r")
-dataids=f.read()
-dataids=dataids.split("\n")
-f.close()
-del dataids[0]
-del dataids[-1]
+
 f = open(process,"r")
 dataprocess=f.read()
 dataprocess=dataprocess.split("\n")
 f.close()
 del dataprocess[0]
 del dataprocess[-1]
-
 dif1=[]
 dif2=[]
 dif3=[]
 dif4=[]
-#get data from pkl
+#select sensorid
+sensorid=""
 pf = pd.read_pickle(source)
-designframe = pd.read_pickle(design)
-for x in dataids:
-    x=x.split(",")
-    DoughID=x[0]
-    if (x[4]!=""):
-        sensorid1=x[4]
-        sensorid2=x[5]  
-        for processdata in dataprocess:
-            processdata=processdata.split(",")
-            if (DoughID==processdata[0]):
-                try:
-                    switch1= datetime.datetime.strptime(processdata[1], structure)#start proof 1
-                    switch2= datetime.datetime.strptime(processdata[2], structure)#stop proof 1
-                    switch3= datetime.datetime.strptime(processdata[3], structure)#start proof 3
-                    switch4= datetime.datetime.strptime(processdata[4], structure)#end proof 3
-                    switch5= datetime.datetime.strptime(processdata[5], structure)#start bake
-                    switch6= datetime.datetime.strptime(processdata[6], structure)#end bake
-                except:
-                    print("Invalid times")
+df = pd.read_pickle(design)
+dataids= pd.read_pickle(ids)
+dataids = dataids.reset_index()
+for x in range( len(dataids)):
+    DoughID=str(dataids.loc[x]['DoughID'])
+    sensorid=str(dataids.loc[x]['Sensor1'])
+    sensorid2=str(dataids.loc[x]['Sensor2'])
+    
+    line_list=[]    
+    line_list2=[]
+    x_list=[]  
+    x_list2=[]
+    #get data from pkl
+    
+    breaddesign =  df.query("dough_id == \"" +DoughID+ "\"")
+    baketime=float(breaddesign['BAKE_totaltime'])
+    proof3time=float(breaddesign['PROOF_final_time'])
+    proof1time=float(breaddesign['PROOF_bulk_time'])
+    
+    #select right dataset
+    myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid+"\""
+    temps =  pf.query(myquery)
+    temps= temps.reset_index()
+    newdata=[]
+    try:
         
-        #variables for the tempereature data and x values
-        line_list = []
-        tempvalues = []
-        x_list = []
-        tempxvalues = []
+        #select hottest point
+        indexbakeend = int(temps.loc[temps['temperature'].idxmax()]['index'])
+        #del temps['temperature']
+        #temps['temperature'] =newdata
+        temps = temps.set_index('index')
         
-        #extract temp from data
-        myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid1+"\""
-        temps =  pf.query(myquery)
-        temps = temps.reset_index()
-        line_list0 = list(savgol_filter(temps['temperature'], 50, 5))
-        del temps['temperature']
+        #select bake start and end time
+        bakeendtime= temps.loc[indexbakeend]['sampling_moment']
+        bakestarttime = bakeendtime - datetime.timedelta(minutes=baketime)
+        bakestarttime = nearest(temps['sampling_moment'],bakestarttime)
+        indexbakestart =  temps.query("sampling_moment == \"" + str(bakestarttime) + "\"")
+        indexbakestart =    int(indexbakestart.index[0])
         
-        temps['temperature'] = line_list0
-        timespandas= pd.DataFrame(x_list)
-        for x in range (len(temps)): 
-            timevalue= temps.iloc[x]['sampling_moment']
-            if (timevalue<switch1):
-                stage=1
-            elif (timevalue>=switch1 and timevalue<=switch2):
-                if (stage==1):
-                    stage =2
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch2 and timevalue<=switch3):
-                if (stage==2):
-                    stage =4
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch3 and timevalue<=switch4):
-                if (stage==4):
-                    stage =6
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch4 and timevalue<=switch5):
-                if (stage==6):
-                    stage =0
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch5 and timevalue<=switch6):
-                if (stage==0):
-                    stage =7
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]  
-            elif (timevalue>switch6):
-                if (stage==7):
-                    stage =8
-                    line_list.append(tempvalues)
-                    x_list.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]       
-            tempvalues.append(temps['temperature'].loc[temps.index[x]])
-            tempxvalues.append(timevalue) 
+        #select proof3 start time
+        proof3starttime= bakestarttime - datetime.timedelta(hours=proof3time)
+        proof3starttime = nearest(temps['sampling_moment'],proof3starttime)
+        indexproof3start =  temps.query("sampling_moment == \"" + str(proof3starttime) + "\"")
+        indexproof3start =    int(indexproof3start.index[0])
+        
+        #select proof1 start and end time
+        for x in dataprocess:
+            x=x.split(",")
+            if (x[0]==DoughID):
+                proof1starttime= datetime.datetime.strptime(x[1], structure)
+        proof1starttime = nearest(temps['sampling_moment'],proof1starttime)        
+        indexproof1start =  temps.query("sampling_moment == \"" + str(proof1starttime) + "\"")
+        indexproof1start =    int(indexproof1start.index[0])    
+        
+        proof1endtime= proof1starttime + datetime.timedelta(hours=proof1time)
+        proof1endtime = nearest(temps['sampling_moment'],proof1endtime)
+        indexproof1end =  temps.query("sampling_moment == \"" + str(proof1endtime) + "\"")
+        indexproof1end =    int(indexproof1end.index[0])
         
         
-        line_list2 = []
-        tempvalues = []
-        x_list2 = []
-        tempxvalues = []
-        xvalue=0
-        stage=1
-        myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid2+"\""
-        temps =  pf.query(myquery)
-        temps = temps.reset_index()
-        line_list0 = list(savgol_filter(temps['temperature'], 50, 5))
-        del temps['temperature']
-        temps['temperature'] = line_list0
-        timespandas= pd.DataFrame(x_list)
-        for x in range (len(temps)): 
-            timevalue= temps.iloc[x]['sampling_moment']
-            if (timevalue<switch1):
-                stage=1
-            elif (timevalue>=switch1 and timevalue<=switch2):
-                if (stage==1):
-                    stage =2
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch2 and timevalue<=switch3):
-                if (stage==2):
-                    stage =4
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch3 and timevalue<=switch4):
-                if (stage==4):
-                    stage =6
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch4 and timevalue<=switch5):
-                if (stage==6):
-                    stage =0
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]
-            elif (timevalue>=switch5 and timevalue<=switch6):
-                if (stage==0):
-                    stage =7
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]  
-            elif (timevalue>switch6):
-                if (stage==7):
-                    stage =8
-                    line_list2.append(tempvalues)
-                    x_list2.append(tempxvalues)
-                    tempvalues=[]
-                    tempxvalues=[]       
-            tempvalues.append(temps['temperature'].loc[temps.index[x]])
-            tempxvalues.append(timevalue) 
+        temps=temps.reset_index()
         
-        designdata =  designframe.query("dough_id == \"" +DoughID+ "\"")
+        #proof 1
+        info =temps[temps['index'] >= indexproof1start]
+        info =info[ temps['index'] <=indexproof1end]
+        x_list.append(info['sampling_moment'].tolist())
+        line_list.append(info['temperature'].tolist())
+        
+        #proof 2ish
+        info =temps[temps['index'] >= indexproof1end]
+        info =info[indexproof3start  >= temps['index']]
+        x_list.append(info['sampling_moment'].tolist())
+        line_list.append(info['temperature'].tolist())
+        
+        #proof 3
+        info =temps[temps['index'] >= indexproof3start]
+        info =info[indexbakestart >= temps['index']]
+        x_list.append(info['sampling_moment'].tolist())
+        line_list.append(info['temperature'].tolist())
+        
+        #bake
+        info =temps[temps['index'] >= indexbakestart ]
+        info =info[indexbakeend  >= temps['index']]
+        x_list.append(info['sampling_moment'].tolist())
+        line_list.append(info['temperature'].tolist())
+        
+        designdata =  df.query("dough_id == \"" +DoughID+ "\"")
         bulkprooftemp=float(designdata['PROOF_bulk_temp'])
         prooftemp=20
         finalprooftemp=float(designdata['PROOF_final_temp'])
         baketemp=float(designdata['BAKE_upper_temp'])
         #1-3
-        try:       
-            if (bulkprooftemp==5):
-                dif1.append(abs(min(line_list[1])-float(bulkprooftemp)))
-            else:
-                dif1.append(abs(max(line_list[1])-float(bulkprooftemp)))
-            dif2.append(abs(max(line_list[2])-max(line_list2[2])))
-            dif3.append(abs(max(line_list[3])-max(line_list2[3])))
-            dif4.append(abs(max(line_list[5])-max(line_list2[5])))
-        except:
-            print("error in data of DoughID "+DoughID)
+    except:
+        print("error in data")
+    myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid2+"\""
+    temps =  pf.query(myquery)
+    temps= temps.reset_index()
+    newdata=[]
+    try:
+        
+        #select hottest point
+        indexbakeend = int(temps.loc[temps['temperature'].idxmax()]['index'])
+        #del temps['temperature']
+        #temps['temperature'] =newdata
+        temps = temps.set_index('index')
+        
+        #select bake start and end time
+        bakeendtime= temps.loc[indexbakeend]['sampling_moment']
+        bakestarttime = bakeendtime - datetime.timedelta(minutes=baketime)
+        bakestarttime = nearest(temps['sampling_moment'],bakestarttime)
+        indexbakestart =  temps.query("sampling_moment == \"" + str(bakestarttime) + "\"")
+        indexbakestart =    int(indexbakestart.index[0])
+        
+        #select proof3 start time
+        proof3starttime= bakestarttime - datetime.timedelta(hours=proof3time)
+        proof3starttime = nearest(temps['sampling_moment'],proof3starttime)
+        indexproof3start =  temps.query("sampling_moment == \"" + str(proof3starttime) + "\"")
+        indexproof3start =    int(indexproof3start.index[0])
+        
+        #select proof1 start and end time
+        for x in dataprocess:
+            x=x.split(",")
+            if (x[0]==DoughID):
+                proof1starttime= datetime.datetime.strptime(x[1], structure)
+        proof1starttime = nearest(temps['sampling_moment'],proof1starttime)        
+        indexproof1start =  temps.query("sampling_moment == \"" + str(proof1starttime) + "\"")
+        indexproof1start =    int(indexproof1start.index[0])    
+        
+        proof1endtime= proof1starttime + datetime.timedelta(hours=proof1time)
+        proof1endtime = nearest(temps['sampling_moment'],proof1endtime)
+        indexproof1end =  temps.query("sampling_moment == \"" + str(proof1endtime) + "\"")
+        indexproof1end =    int(indexproof1end.index[0])
+        
+        
+        temps=temps.reset_index()
+        
+        #proof 1
+        info =temps[temps['index'] >= indexproof1start]
+        info =info[ temps['index'] <=indexproof1end]
+        x_list2.append(info['sampling_moment'].tolist())
+        line_list2.append(info['temperature'].tolist())
+        
+        #proof 2ish
+        info =temps[temps['index'] >= indexproof1end]
+        info =info[indexproof3start  >= temps['index']]
+        x_list2.append(info['sampling_moment'].tolist())
+        line_list2.append(info['temperature'].tolist())
+        
+        #proof 3
+        info =temps[temps['index'] >= indexproof3start]
+        info =info[indexbakestart >= temps['index']]
+        x_list2.append(info['sampling_moment'].tolist())
+        line_list2.append(info['temperature'].tolist())
+        
+        #bake
+        info =temps[temps['index'] >= indexbakestart ]
+        info =info[indexbakeend  >= temps['index']]
+        x_list2.append(info['sampling_moment'].tolist())
+        line_list2.append(info['temperature'].tolist())
+        
+        designdata =  df.query("dough_id == \"" +DoughID+ "\"")
+        bulkprooftemp=float(designdata['PROOF_bulk_temp'])
+        prooftemp=20
+        finalprooftemp=float(designdata['PROOF_final_temp'])
+        baketemp=float(designdata['BAKE_upper_temp'])
+        #1-3
+    except:
+        print("error in data")
+    try:       
+        if (bulkprooftemp==5):
+            dif1.append(abs(min(line_list[0])-float(min(line_list2[0]))))
+        else:
+            dif1.append(abs(max(line_list[0])-float(max(line_list2[0]))))
+        dif2.append(abs(max(line_list[1])-max(line_list2[1])))
+        if (bulkprooftemp==5):
+            dif3.append(abs(min(line_list[2])-min(line_list2[2])))
+        else:
+            dif3.append(abs(max(line_list[2])-max(line_list2[2])))
+        dif4.append(abs(max(line_list[3])-max(line_list2[3])))
+    except:
+        print("error in data of DoughID "+DoughID)
 try:
     fig, axs = plt.subplots(2, 2)
     

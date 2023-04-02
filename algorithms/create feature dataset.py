@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Apr  2 22:35:11 2023
+
+@author: zydeb
+"""
 import datetime
 import pandas as pd
 from scipy.signal import savgol_filter
@@ -12,6 +18,10 @@ source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
 ids=  "../rearangeddata/new 3-01/beter-pandas-ids.pkl"
 process= "../rearangeddata/new 3-01/process.csv"
 design = "../rearangeddata/new 3-01/pandas-design.pkl"
+bakepandas = "../rearangeddata/new 3-01/pandas-bake.pkl"
+bulkproofpandas = "../rearangeddata/new 3-01/pandas-bulkproof.pkl"
+finalproofpandas = "../rearangeddata/new 3-01/pandas-finalproof.pkl"
+
 
 structure="%Y-%m-%d %H:%M"
 #read files
@@ -22,27 +32,36 @@ dataprocess=dataprocess.split("\n")
 f.close()
 del dataprocess[0]
 del dataprocess[-1]
-x1=[]
-y1=[]
-x2=[]
-y2=[]
-x3=[]
-y3=[]
-x4=[]
-y4=[]
+
 #select sensorid
 sensorid=""
 pf = pd.read_pickle(source)
 df = pd.read_pickle(design)
 dataids= pd.read_pickle(ids)
 dataids = dataids.reset_index()
+pandas_bake= pd.DataFrame('index','set_temperature','real_temperature','time_stamp')
+pandas_bulkproof = pd.DataFrame('index','set_temperature','real_temperature','time_stamp')
+pandas_finalproof = pd.DataFrame('index','set_temperature','real_temperature','time_stamp')
+index=[]
+settempbake=[]
+settempbulk=[]
+settempfinal=[]
+realtempbake=[]
+realtempbulk=[]
+realtempfinal=[]
+timestampbake=[]
+timestampbulk=[]
+timestampfinal=[]
+
+
+
 for x in range( len(dataids)):
     DoughID=str(dataids.loc[x]['DoughID'])
     sensorid=str(dataids.loc[x]['Sensor1'])
-    sensorid2=str(dataids.loc[x]['Sensor2'])
-    
+               
+    x_list=[]
     line_list=[]    
-    x_list=[]  
+    
     #get data from pkl
     
     breaddesign =  df.query("dough_id == \"" +DoughID+ "\"")
@@ -117,62 +136,32 @@ for x in range( len(dataids)):
         x_list.append(info['sampling_moment'].tolist())
         line_list.append(info['temperature'].tolist())
         
+                
         designdata =  df.query("dough_id == \"" +DoughID+ "\"")
         bulkprooftemp=float(designdata['PROOF_bulk_temp'])
         prooftemp=20
         finalprooftemp=float(designdata['PROOF_final_temp'])
         baketemp=float(designdata['BAKE_upper_temp'])
-        #1-3
-    except:
-        print("error in data")
-          
-    designdata =  df.query("dough_id == \"" +DoughID+ "\"")
-    bulkprooftemp=float(designdata['PROOF_bulk_temp'])
-    prooftemp=20
-    finalprooftemp=float(designdata['PROOF_final_temp'])
-    baketemp=float(designdata['BAKE_upper_temp'])    
-        #1-3
-
-    try:     
         
-        if(len(line_list[0])!=0):
-            if (bulkprooftemp==5):
-                x1.append(bulkprooftemp)
-                y1.append(min(line_list[0]))
-            else:
-                x1.append(bulkprooftemp)
-                y1.append(max(line_list[0]))
-        if(len(line_list[1])!=0):
-            x2.append(prooftemp)
-            y2.append(max(line_list[1]))
-        if(len(line_list[2])!=0):
-            if (finalprooftemp==5):
-                x3.append(finalprooftemp)
-                y3.append(min(line_list[2]))
-            else:
-                x3.append(finalprooftemp)
-                y3.append(max(line_list[2]))
-        if(len(line_list[3])!=0):
-            x4.append(baketemp)
-            y4.append(max(line_list[3]))
+        
+        
+        index.append(DoughID+sensorid)
+        settempbake.append(baketemp for x in range(len(line_list[3])))
+        settempbulk.append()
+        settempfinal.append()
+        realtempbake.append()
+        realtempbulk.append()
+        realtempfinal.append()
+        timestampbake.append()
+        timestampbulk.append()
+        timestampfinal.append()
+        
+        
         
     except:
-        print("error in data of DoughID "+DoughID)
-try:
-    fig, axs = plt.subplots(2, 2)
-    
-    
-    axs[0, 0].scatter(x1,y1)
-    axs[0, 0].set_title('proof 1')
-    axs[0, 1].scatter(x2,y2)
-    axs[0, 1].set_title('proof 2')
-    axs[1, 0].scatter(x3,y3)
-    axs[1, 0].set_title('proof 3')
-    axs[1, 1].scatter(x4,y4)
-    axs[1, 1].set_title('bake')
-    fig.suptitle('Plot theoretical vs real')
-    fig.show()
-except:
-    print("error in plotting")        
-
-
+        print("error")
+        
+        
+pandas_bake.to_pickle(bakepandas)
+pandas_bulkproof.to_pickle(bulkproofpandas)
+pandas_finalproof.to_pickle(finalproofpandas)
