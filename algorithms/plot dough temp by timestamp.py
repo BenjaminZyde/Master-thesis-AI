@@ -15,7 +15,7 @@ def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
 #chose valid breadID
-DoughID="DO94"
+DoughID="DO138"
 #chose bread 1 or bread 2
 bread=2 #1/2
 
@@ -90,8 +90,8 @@ indexproof3start =    int(indexproof3start.index[0])
 for x in dataprocess:
     x=x.split(",")
     if (x[0]==DoughID):
-        proof1starttime= datetime.datetime.strptime(x[1], structure)
-proof1starttime = nearest(temps['sampling_moment'],proof1starttime)        
+        Ineedyou= datetime.datetime.strptime(x[1], structure)
+proof1starttime = nearest(temps['sampling_moment'],Ineedyou)        
 indexproof1start =  temps.query("sampling_moment == \"" + str(proof1starttime) + "\"")
 indexproof1start =    int(indexproof1start.index[0])    
 

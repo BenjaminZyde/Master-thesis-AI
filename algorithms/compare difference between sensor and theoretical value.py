@@ -8,18 +8,13 @@ def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
 source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
-ids= "../rearangeddata/new 3-01/ids.csv"
+ids=  "../rearangeddata/new 3-01/pandas-ids.pkl"
 process= "../rearangeddata/new 3-01/process.csv"
 design = "../rearangeddata/new 3-01/pandas-design.pkl"
 
 structure="%Y-%m-%d %H:%M"
 #read files
-f = open(ids,"r")
-dataids=f.read()
-dataids=dataids.split("\n")
-f.close()
-del dataids[0]
-del dataids[-1]
+
 f = open(process,"r")
 dataprocess=f.read()
 dataprocess=dataprocess.split("\n")
@@ -34,10 +29,11 @@ dif4=[]
 sensorid=""
 pf = pd.read_pickle(source)
 df = pd.read_pickle(design)
-for x in dataids:
-    x=x.split(",")
-    DoughID=x[0]
-    sensorid=x[4]
+dataids= pd.read_pickle(ids)
+dataids = dataids.reset_index()
+for x in range( len(dataids)):
+    DoughID=str(dataids.loc[x]['DoughID'])
+    sensorid=str(dataids.loc[x]['Sensor1'])
                
     x_list=[]
     line_list=[]    
@@ -55,7 +51,6 @@ for x in dataids:
     temps= temps.reset_index()
     newdata=[]
     try:
-        newdata= savgol_filter(temps['temperature'], 50, 5)
         
         #select hottest point
         indexbakeend = int(temps.loc[temps['temperature'].idxmax()]['index'])
@@ -128,15 +123,15 @@ for x in dataids:
         print("error")
     try:       
        if (bulkprooftemp==5):
-           dif1.append(abs(min(line_list[1])-float(bulkprooftemp)))
+           dif1.append(abs(min(line_list[0])-float(bulkprooftemp)))
        else:
-            dif1.append(abs(max(line_list[1])-float(bulkprooftemp)))
-       dif2.append(abs(max(line_list[2])-float(prooftemp)))
+            dif1.append(abs(max(line_list[0])-float(bulkprooftemp)))
+       dif2.append(abs(max(line_list[1])-float(prooftemp)))
        if (finalprooftemp==5):
-           dif1.append(abs(min(line_list[3])-float(bulkprooftemp)))
+           dif3.append(abs(min(line_list[2])-float(finalprooftemp)))
        else:
-            dif1.append(abs(max(line_list[3])-float(bulkprooftemp)))
-       dif4.append(abs(max(line_list[4])-float(baketemp)))
+           dif3.append(abs(max(line_list[2])-float(finalprooftemp)))
+       dif4.append(abs(max(line_list[3])-float(baketemp)))
     except:
         print("error in data of DoughID "+DoughID)
 try:
