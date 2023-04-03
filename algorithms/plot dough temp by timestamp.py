@@ -9,13 +9,12 @@ import matplotlib
 import matplotlib.pyplot as plt
 import datetime
 import pandas as pd
-from scipy.signal import savgol_filter
 
 def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
 #chose valid breadID
-DoughID="DO138"
+DoughID="DO118"
 #chose bread 1 or bread 2
 bread=2 #1/2
 
@@ -38,8 +37,8 @@ del dataprocess[0]
 del dataprocess[-1]
 
 #select sensorid
-myquery="DoughID== \"" +DoughID+ "\""
-temps =  dataids.query(myquery)
+
+temps =  dataids.query("DoughID== \"" +DoughID+ "\"")
 if (bread ==1):
     sensorid = temps['Sensor1']
 else:
@@ -56,17 +55,17 @@ proof3time=float(breaddesign['PROOF_final_time'])
 proof1time=float(breaddesign['PROOF_bulk_time'])
 
 #select right dataset
+
 myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid+"\""
-temps =  pf.query(myquery)
+myquery = myquery.tolist()
+temps =  pf.query(myquery[0])
 temps= temps.reset_index()
-newdata=[]
-newdata= savgol_filter(temps['temperature'], 50, 5)
+
 
 #select hottest point
 indexbakeend = int(temps.loc[temps['temperature'].idxmax()]['index'])
-del temps['temperature']
-temps['temperature'] =newdata
-temps = temps.set_index('index')
+temps= temps.set_index('index')
+
 
 #select bake start and end time
 bakeendtime= temps.loc[indexbakeend]['sampling_moment']

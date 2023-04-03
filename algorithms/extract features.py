@@ -1,40 +1,26 @@
 
-
-import matplotlib
-import matplotlib.pyplot as plt
-import datetime
-import tsfresh
-import pandas as pd
-
-#chose bread 1 or bread 2
-
-
-#static data for one doughID
-source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
-ids=  "../rearangeddata/new 3-01/pandas-ids.pkl"
-process= "../rearangeddata/new 3-01/process.csv"
-
-
-structure="%Y-%m-%d %H:%M"
-#read files
-
-f = open(process,"r")
-dataprocess=f.read()
-dataprocess=dataprocess.split("\n")
-f.close()
-del dataprocess[0]
-del dataprocess[-1]
-dataids= pd.read_pickle(ids)
-dataids = dataids.reset_index()
-pf = pd.read_pickle(source)
-pf['newindex'] = pf['dough_id']+pf['sensor_id']           
-#pf = pf.set_index('newindex')
-
-
-
-
-#extract temp from data
-
+if __name__ == "__main__":
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import datetime
+    from tsfresh.feature_extraction import MinimalFCParameters
+    from tsfresh.feature_extraction import extract_features
+    import pandas as pd
     
-#extract features
-features_filtered_direct = tsfresh.extract_features(pf, column_id="newindex")
+    
+    #location source file
+    source= "../rearangeddata/new 3-01/pandas-bake.pkl"
+    savefeatures = "../rearangeddata/new 3-01/pandas-bake-features.pkl"
+    excel = "../rearangeddata/new 3-01/pandas-bake-features.csv"
+    
+   
+    settings = MinimalFCParameters()
+    
+    pf = pd.read_pickle(source)
+    #lists= [True for x in range(len(pf))]
+    #y= pd.Series(lists)          
+    #extract features
+    features = extract_features(pf, column_id="id",column_sort="time_stamp",default_fc_parameters=settings)
+    #features = tsfresh.extract_relevant_features(pf,y, column_id="id",column_sort="time_stamp")
+    features.to_pickle(savefeatures)
+    features.to_csv(excel, sep=';')
