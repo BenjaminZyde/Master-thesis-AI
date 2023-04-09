@@ -10,9 +10,11 @@ plot sensor and theoretical value
 
 these four algorithms look into the original data and see what differences there are between both sensors and between a sensor and the theorethical value
 
+extract features
+    this algorithm extract features of the given dataset
 
 plot dough temp by timestamp
 
-This algorithm plots 1 timeseries devided in all 4 parts of the process 
+  This algorithm plots 1 timeseries devided in all 4 parts of the process 
 
 other python scripts are for testing or were working prototypes
