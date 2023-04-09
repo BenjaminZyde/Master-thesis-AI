@@ -21,7 +21,7 @@ design = "../rearangeddata/new 3-01/pandas-design.pkl"
 bakepandas = "../rearangeddata/new 3-01/pandas-bake.pkl"
 bulkproofpandas = "../rearangeddata/new 3-01/pandas-bulkproof.pkl"
 finalproofpandas = "../rearangeddata/new 3-01/pandas-finalproof.pkl"
-
+#finalproofseries = "../rearangeddata/new 3-01/series-finalproof.pkl"
 
 structure="%Y-%m-%d %H:%M"
 #read files
@@ -52,7 +52,8 @@ realtempfinal=[]
 timestampbake=[]
 timestampbulk=[]
 timestampfinal=[]
-
+#testerindex=[]
+#testertemp=[]
 
 
 for x in range( len(dataids)):
@@ -156,6 +157,8 @@ for x in range( len(dataids)):
             settempfinal.append(finalprooftemp)         
             realtempfinal.append(line_list[2][x])
             timestampfinal.append(x_list[2][x])
+        #testerindex.append(DoughID+sensorid)
+        #testertemp.append(finalprooftemp)
             
         for y in range(len(line_list[3])):
            indexbake.append(DoughID+sensorid)
@@ -263,7 +266,8 @@ for x in range( len(dataids)):
             settempfinal.append(finalprooftemp)         
             realtempfinal.append(line_list[2][x])
             timestampfinal.append(x_list[2][x])
-            
+        #testerindex.append(DoughID+sensorid)
+        #testertemp.append(finalprooftemp)    
         for y in range(len(line_list[3])):
            indexbake.append(DoughID+sensorid)
            settempbake.append(baketemp)
@@ -280,7 +284,13 @@ pandas_bulkproof = pd.DataFrame(dict)
 dict = {'id':indexfinal,'set_temperature':settempfinal,'real_temperature':realtempfinal,'time_stamp':timestampfinal}
 pandas_finalproof = pd.DataFrame(dict)     
 
+#testerseries=pd.Series(testertemp)
+#testerseries=testerseries.set_axis(testerindex)
+
+
+
   
 pandas_bake.to_pickle(bakepandas)
 pandas_bulkproof.to_pickle(bulkproofpandas)
 pandas_finalproof.to_pickle(finalproofpandas)
+#testerseries.to_pickle(finalproofseries)
