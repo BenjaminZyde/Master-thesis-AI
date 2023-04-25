@@ -1,4 +1,4 @@
-DOID,Bulkproof start,Bulkproof stop,Finalproof start, Finalproof stop,Bake start, Bake stop
+dough_id,Bulkproof start,Bulkproof stop,Finalproof start,Finalproof stop,Bake start,Bake stop
 DO100,2022-09-28 11:04,2022-09-28 11:19,2022-09-28 11:48,2022-09-28 12:03,2022-09-28 12:08,2022-09-28 12:58
 DO101,2022-09-28 12:10,2022-09-28 12:25,2022-09-28 12:49,2022-09-28 13:04,2022-09-28 13:05,2022-09-28 13:37
 DO104,2022-09-29 09:33,2022-09-29 10:33,2022-09-29 10:58,2022-09-29 11:13,2022-09-29 11:18,2022-09-29 12:08

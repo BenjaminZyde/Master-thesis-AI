@@ -1,6 +1,5 @@
 import datetime
 import pandas as pd
-from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
 import numpy as np
 

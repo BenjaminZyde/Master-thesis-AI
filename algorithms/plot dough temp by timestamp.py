@@ -14,9 +14,9 @@ def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
 #chose valid breadID
-DoughID="DO1180"
+DoughID="DO86"
 #chose bread 1 or bread 2
-bread=2 #1/2
+bread=1 #1/2
 
 #static data for one doughID
 source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"

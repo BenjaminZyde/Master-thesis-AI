@@ -1,4 +1,4 @@
-dough ID, proof 1 temp, proof 1 rel hum, proof 2 temp, proof 2 rel hum, proof 3 temp, proof 3 rel hum, bake temp
+dough_id, proof 1 temp, proof 1 rel hum, proof 2 temp, proof 2 rel hum, proof 3 temp, proof 3 rel hum, bake temp
 DO47,19.899999999999999,61.3,19.899999999999999,62.4,5,<uncontrolled>,210
 DO48,20.9,61.9,20.3,64.5,5,<uncontrolled>,210
 DO49,21.2,61.6,20.2,55.6,5,<uncontrolled>,210
