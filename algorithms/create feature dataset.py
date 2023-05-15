@@ -116,8 +116,8 @@ for x in range( len(dataids)):
         
         try:
             for y in range(len(line_list[0])):  
-                realtempbulk.append(line_list[0][x])
-                timestampbulk.append(x_list[0][x])
+                realtempbulk.append(line_list[0][y])
+                timestampbulk.append(x_list[0][y])
                 indexbulk.append(DoughID+sensorid)
                 settempbulk.append(bulkprooftemp)
         except:
@@ -126,8 +126,8 @@ for x in range( len(dataids)):
             for y in range(len(line_list[2])): 
                 indexfinal.append(DoughID+sensorid)
                 settempfinal.append(finalprooftemp)         
-                realtempfinal.append(line_list[2][x])
-                timestampfinal.append(x_list[2][x])
+                realtempfinal.append(line_list[2][y])
+                timestampfinal.append(x_list[2][y])
         except:
             print("error3")
        
@@ -135,8 +135,8 @@ for x in range( len(dataids)):
             for y in range(len(line_list[3])):
                indexbake.append(DoughID+sensorid)
                settempbake.append(baketemp)
-               realtempbake.append(line_list[3][x])
-               timestampbake.append(x_list[3][x]) 
+               realtempbake.append(line_list[3][y])
+               timestampbake.append(x_list[3][y]) 
         except:
             print("error3")
     except:
@@ -190,8 +190,8 @@ for x in range( len(dataids)):
         
         try:
             for y in range(len(line_list[0])):
-                timestampbulk.append(x_list[0][x]) 
-                realtempbulk.append(line_list[0][x])
+                timestampbulk.append(x_list[0][y]) 
+                realtempbulk.append(line_list[0][y])
                 settempbulk.append(bulkprooftemp)
                 indexbulk.append(DoughID+sensorid)
         except:
@@ -200,8 +200,8 @@ for x in range( len(dataids)):
             for y in range(len(line_list[2])): 
                 indexfinal.append(DoughID+sensorid)
                 settempfinal.append(finalprooftemp)         
-                realtempfinal.append(line_list[2][x])
-                timestampfinal.append(x_list[2][x])
+                realtempfinal.append(line_list[2][y])
+                timestampfinal.append(x_list[2][y])
         except:
             print("error3") 
         #testerindex.append(DoughID+sensorid)
@@ -210,8 +210,8 @@ for x in range( len(dataids)):
             for y in range(len(line_list[3])):
                indexbake.append(DoughID+sensorid)
                settempbake.append(baketemp)
-               realtempbake.append(line_list[3][x])
-               timestampbake.append(x_list[3][x])  
+               realtempbake.append(line_list[3][y])
+               timestampbake.append(x_list[3][y])  
         except:
               print("error3") 
     except:

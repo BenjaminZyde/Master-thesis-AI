@@ -16,7 +16,16 @@ def nearesttime(items, pivot):
     moment=items.loc[moment]['sampling_moment']
    
     return moment
+def latesttime(items, pivot):
+     
+     temperature= nearest(items['temperature'] ,pivot)
+     moment=items[items['temperature']  >= temperature-0.00000000000001]
+     moment=moment[moment['temperature']  <= temperature+0.00000000000001]
+     moment = moment.reset_index()
+     moment= moment.loc[-1]['index']
+     moment=items.loc[moment]['sampling_moment']
     
+     return moment   
     
 
 source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
@@ -106,7 +115,7 @@ for x in range (len(dataids)):
         info =temps[temps['sampling_moment'] >= lowertime]
         info =info[ temps['sampling_moment'] <= uppertime]
         pivot=setting.loc[0]['PROOF_final_temp']
-        startb= nearesttime(info, pivot)
+        startb= latesttime(info, pivot)
         
         pivot = indexbakeend
         stopb = temps.loc[pivot]['sampling_moment']

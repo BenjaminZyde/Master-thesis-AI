@@ -21,7 +21,7 @@ def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
 #chose valid breadID
-DoughID="DO86"
+DoughID="DO48"
 #chose bread 1 or bread 2
 bread=1 #1/2
 
@@ -33,7 +33,7 @@ process= "../rearangeddata/new 3-01/pandas-process.pkl"
 
 #read files
 dataids= pd.read_pickle(ids)
-dataids = dataids.reset_index()
+#dataids = dataids.reset_index()
 pf = pd.read_pickle(source)
 df = pd.read_pickle(process)
 
@@ -103,7 +103,6 @@ line_list.append(info['temperature'].tolist())
 
 
 
-
 try:      
           
                     
@@ -121,7 +120,7 @@ try:
     ax.plot(x_list[3],line_list[3], color="g")
     ax.plot(x_list[4],line_list[4], color="b")
     ax.plot(x_list[5],line_list[5], color="gray")
-    fig.legend(['pre','proof1','proof 2?','proof3','bake','post'])
+    fig.legend(['pre','proof 1','proof 2','proof 3','bake','post'])
     ax.set_xlabel('Time [hh:mm]')
     ax.set_ylabel('temperature [°C]')
     ax.set_title("core temperature bread")
