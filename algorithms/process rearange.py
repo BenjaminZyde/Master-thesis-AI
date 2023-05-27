@@ -2,10 +2,10 @@ import datetime
 
 filler= datetime.datetime(2000, 12, 20)
 
-breadlink= "../data/new 3-01/bread_link.csv"
-doughlink= "../data/new 3-01/dough_link.csv"
+breadlink= "../data/new 9-05/bread_link.csv"
+doughlink= "../data/new 9-05/dough_link.csv"
 
-process="../rearangeddata/new 3-01/process.csv"
+process="../rearangeddata/new 9-05/process.csv"
 
 
 f = open(doughlink,"r")
@@ -23,7 +23,7 @@ del databreadlink[0]
 del databreadlink[-1]
 
 f = open(process, "w")
-f.write("DOID,Bulkproof start,Bulkproof stop,Finalproof start, Finalproof stop,Bake start, Bake stop\n")
+f.write("dough_id,Bulkproof start,Bulkproof stop,Finalproof start,Finalproof stop,Bake start,Bake stop\n")
 f.close()  
 
 
@@ -68,7 +68,7 @@ for x in range(len(datadoughlink)):
     except:
         bulkproofstop=""
     try:
-        hour= xdata[11].split(":")
+        hour= xdata[13].split(":")
         date=xdata[9].split(" ")
         date=date[0].split("-")
     except: 
@@ -79,8 +79,8 @@ for x in range(len(datadoughlink)):
     except:
         finalproofstart=""
     try:
-        hour= xdata[13].split(":")
-        date=xdata[12].split(" ")
+        hour= xdata[15].split(":")
+        date=xdata[14].split(" ")
         date=date[0].split("-")
     except: 
         hour=["",""]

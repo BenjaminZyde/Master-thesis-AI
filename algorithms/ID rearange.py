@@ -2,11 +2,11 @@
 
 
 
-doughlink= "../data/new 3-01/dough_link.csv"
-breadlink= "../data/new 3-01/bread_link.csv"
-doughtemp= "../data/new 3-01/dough_temperatures.csv"
+doughlink= "../data/new 9-05/dough_link.csv"
+breadlink= "../data/new 9-05/bread_link.csv"
+doughtemp= "../data/new 9-05/dough_temperatures.csv"
 
-idlink="../rearangeddata/IDs.csv"
+idlink="../rearangeddata/new 9-05/IDs.csv"
 
 f = open(doughlink,"r")
 datadoughlink=f.read()
@@ -30,7 +30,7 @@ del datadoughtemp[0]
 del datadoughtemp[-1]
 
 f = open(idlink, "w")
-f.write("DoughID,BakeTest,MakeID,BakeID,Sensor1,Sensor2,FormID\n")
+f.write("dough_id,BakeTest,MakeID,BakeID,Sensor1,Sensor2,FormID\n")
 f.close()  
 
 
@@ -41,7 +41,7 @@ for x in range(len(datadoughlink)):
 for x in range(len(databreadlink)):
     databreadlink[x]=databreadlink[x].split(";")
 for x in range(len(datadoughtemp)):
-    datadoughtemp[x]=datadoughtemp[x].split(";")
+    datadoughtemp[x]=datadoughtemp[x].split(",")
 
 
 
@@ -55,15 +55,15 @@ for x in range(len(datadoughlink)):
     SensorID1=""
     SensorID2=""
     
-    DoughID=xdata[0]
-    FormID=xdata[1]
-    MakeID=xdata[2]
+    DoughID=xdata[2]
+    FormID=xdata[3]
+    MakeID=xdata[4]
     
     for y in range(len(databreadlink)):
         ydata=databreadlink[y]
-        if (ydata[1]==DoughID):
-            BakeTest=ydata[0]
-            BakeID=ydata[2]
+        if (ydata[3]==DoughID):
+            BakeTest=ydata[2]
+            BakeID=ydata[4]
             for z in range(len(datadoughtemp)):
                 zdata=datadoughtemp[z]
                 if (zdata[4]==DoughID and SensorID1=="" and SensorID2==""):

@@ -9,13 +9,13 @@ Created on Sun Feb 19 19:11:27 2023
 
 
 
-bake= "../data/new 3-01/bake.csv"
-make= "../data/new 3-01/make.csv"
+bake= "../data/new 9-05/bake.csv"
+make= "../data/new 9-05/make.csv"
 
-ids="../rearangeddata/new 3-01/IDs.csv"
-process="../rearangeddata/new 3-01/process.csv"
+ids="../rearangeddata/new 9-05/IDs.csv"
+process="../rearangeddata/new 9-05/process.csv"
 
-settings="../rearangeddata/new 3-01/settings.csv"
+settings="../rearangeddata/new 9-05/settings.csv"
 
 
 

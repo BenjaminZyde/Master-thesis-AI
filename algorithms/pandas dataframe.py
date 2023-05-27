@@ -10,10 +10,10 @@ import tsfresh
 import pandas as pd
 import datetime
 
-source= "../data/new 3-01/dough_temperatures.csv"
-pickles= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
+source= "../data/new 9-05/dough_temperatures.csv"
+pickles= "../rearangeddata/new 9-05/pandas-timeseries.pkl"
 
-pf = pd.read_csv(source, sep=';')
+pf = pd.read_csv(source, sep=',')
 
 del pf['TS_UPDATE']
 del pf['USER']
@@ -23,7 +23,7 @@ del pf['BREP']
 
 days=[]
 for x in range( len(pf)):
-    day= datetime.datetime.strptime(pf['sampling_date'].loc[pf.index[x]], "%Y-%m-%d %H:%M:%S")
+    day= datetime.datetime.strptime(pf['sampling_date'].loc[pf.index[x]], "%m/%d/%Y")
     hours = datetime.datetime.strptime(pf['sampling_time'].loc[pf.index[x]], "%H:%M:%S")
     timevalue= datetime.datetime.strptime(str(day.year)+"-"+str(day.month)+"-"+str(day.day)+" "+str(hours.hour)+":"+str(hours.minute)+":"+str(hours.second), "%Y-%m-%d %H:%M:%S")   
     days.append(timevalue)

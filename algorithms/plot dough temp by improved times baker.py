@@ -21,50 +21,54 @@ def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
 #chose valid breadID
-DoughID="DO48"
+DoughID="DO84"
 #chose bread 1 or bread 2
 bread=1 #1/2
 
 #static data for one doughID
 source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
-ids=  "../rearangeddata/new 3-01/pandas-ids.pkl"
+ids=  "../rearangeddata/new 3-01/beter-pandas-ids.pkl"
 process= "../rearangeddata/new 3-01/pandas-process.pkl"
 
 
 #read files
 dataids= pd.read_pickle(ids)
+
 #dataids = dataids.reset_index()
 pf = pd.read_pickle(source)
 df = pd.read_pickle(process)
 
 #select sensorid
 
-temps =  dataids.query("DoughID== \"" +DoughID+ "\"")
+temps =  dataids.query("DoughID== \"" +str(DoughID)+ "\"")
+temps.reset_index(inplace=True)
+if (len(temps)==0):
+    raise Exception ('no such dough id')
+    
 if (bread ==1):
-    sensorid = temps['Sensor1']
+    sensorid = temps.iloc[0].loc['Sensor1']
 else:
-    sensorid = temps['Sensor2']      
+    sensorid = temps.iloc[0].loc['Sensor2']     
     
 
 
 
-myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid+"\""
-myquery = myquery.tolist()
-temps =  pf.query(myquery[0])
+myquery="dough_id == \"" +str(DoughID)+ "\" and sensor_id == \""+str(sensorid)+"\""
+temps =  pf.query(myquery)
 temps= temps.reset_index()
-myquery="dough_id == \"" +DoughID+ "\" "
+myquery="dough_id == \"" +str(DoughID)+ "\" "
 times =  df.query(myquery)
 times= times.reset_index()
 
 x_list=[]
 line_list=[]
 
-timeproof1start=times.loc[0]['startbulkproof']
-timeproof1end=times.loc[0]['stopbulkproof']
-timeproof3start=times.loc[0]['startfinalproof']
-timeproof3stop=times.loc[0]['stopfinalproof']
-timebakestart =times.loc[0]['startbake']
-timebakeend=times.loc[0]['stopbake']
+timeproof1start=times.iloc[0].loc['startbulkproof']
+timeproof1end=times.iloc[0].loc['stopbulkproof']
+timeproof3start=times.iloc[0].loc['startfinalproof']
+timeproof3stop=times.iloc[0].loc['stopfinalproof']
+timebakestart =times.iloc[0].loc['startbake']
+timebakeend=times.iloc[0].loc['stopbake']
 
 
 #preproof 1

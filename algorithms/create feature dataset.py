@@ -6,7 +6,6 @@ Created on Sun Apr  2 22:35:11 2023
 """
 import datetime
 import pandas as pd
-from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,13 +13,13 @@ import numpy as np
 def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
-source= "../rearangeddata/new 3-01/pandas-timeseries.pkl"
-ids=  "../rearangeddata/new 3-01/beter-pandas-ids.pkl"
-process= "../rearangeddata/new 3-01/pandas-process.pkl"
-design = "../rearangeddata/new 3-01/pandas-design.pkl"
-bakepandas = "../rearangeddata/new 3-01/pandas-bake.pkl"
-bulkproofpandas = "../rearangeddata/new 3-01/pandas-bulkproof.pkl"
-finalproofpandas = "../rearangeddata/new 3-01/pandas-finalproof.pkl"
+source= "../rearangeddata/new 9-05/pandas-timeseries.pkl"
+ids=  "../rearangeddata/new 9-05/beter-pandas-ids.pkl"
+process= "../rearangeddata/new 9-05/pandas-process.pkl"
+design = "../rearangeddata/new 9-05/pandas-design.pkl"
+bakepandas = "../rearangeddata/new 9-05/pandas-bake.pkl"
+bulkproofpandas = "../rearangeddata/new 9-05/pandas-bulkproof.pkl"
+finalproofpandas = "../rearangeddata/new 9-05/pandas-finalproof.pkl"
 #finalproofseries = "../rearangeddata/new 3-01/series-finalproof.pkl"
 
 structure="%Y-%m-%d %H:%M"
@@ -51,7 +50,7 @@ timestampfinal=[]
 
 
 for x in range( len(dataids)):
-    DoughID=str(dataids.loc[x]['DoughID'])
+    DoughID=str(dataids.loc[x]['dough_id'])
     sensorid=str(dataids.loc[x]['Sensor1'])
                
     x_list=[]
@@ -60,11 +59,11 @@ for x in range( len(dataids)):
     
     
     #select right dataset
-    myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid+"\""
+    myquery="dough_id == \"" +str(DoughID)+ "\" and sensor_id == \""+str(sensorid)+"\""
     temps =  pf.query(myquery)
     temps= temps.reset_index()
     
-    myquery="dough_id == \"" +DoughID+ "\" "
+    myquery="dough_id == \"" +str(DoughID)+ "\" "
     times =  processdata.query(myquery)
     times= times.reset_index()
     
@@ -141,7 +140,7 @@ for x in range( len(dataids)):
             print("error3")
     except:
         print("error1") 
-    sensorid=str(dataids.loc[x]['Sensor2'])
+    sensorid=str(dataids.iloc[x].loc['Sensor2'])
                
     x_list=[]
     line_list=[]    
@@ -149,7 +148,7 @@ for x in range( len(dataids)):
     
     
     #select right dataset
-    myquery="dough_id == \"" +DoughID+ "\" and sensor_id == \""+sensorid+"\""
+    myquery="dough_id == \"" +str(DoughID)+ "\" and sensor_id == \""+str(sensorid)+"\""
     temps =  pf.query(myquery)
     temps= temps.reset_index()
     newdata=[]

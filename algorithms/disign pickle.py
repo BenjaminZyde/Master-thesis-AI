@@ -4,12 +4,11 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import datetime
-import tsfresh
 import pandas as pd
 
 
-source= "../data/new 3-01/design.csv"
-pickles= "../rearangeddata/new 3-01/pandas-design.pkl"
+source= "../data/new 9-05/design.csv"
+pickles= "../rearangeddata/new 9-05/pandas-design.pkl"
 
 pf = pd.read_csv(source, sep=';')
 
