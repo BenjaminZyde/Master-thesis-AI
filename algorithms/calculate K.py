@@ -55,35 +55,36 @@ for x in range(len(dataids)):
     sensor2=dataids.iloc[x].loc['Sensor2']
     if (isinstance(sensor2, float)):
         break
-    myquery="id == \"" +str(DoughID)+str(sensor)+ "\""
-    temps= data.query(myquery)
-    temps.reset_index(inplace=True)
-    roomtemp=temps.iloc[0].loc['set_temperature']
-    starttime=temps.iloc[0].loc['time_stamp']  
-    endtime=temps.iloc[len(temps)-1].loc['time_stamp']  
-    timepassed=(endtime-starttime).total_seconds()
-    doughtemp=temps.iloc[0].loc['real_temperature']
-    doughtempend=temps.iloc[len(temps)-1].loc['real_temperature']
-    dif=[]
-    closestk=0
-    closesttemp=0
-    temp=[]
-    for z in range(1,100000,1):
-        
-        temp = (roomtemp+((doughtemp-roomtemp)*math.pow(math.e,-(z/10000000)*timepassed)))
-        dif.append(abs(temp-doughtempend))
-        if (abs(temp-doughtempend)<=0.0001):
-            closestk=z
-            break
-        if (abs(temp-doughtempend)<=abs(closesttemp-doughtempend)):
-            closestk=z
-            closesttemp=temp
+    else:
+        myquery="id == \"" +str(DoughID)+str(sensor)+ "\""
+        temps= data.query(myquery)
+        temps.reset_index(inplace=True)
+        roomtemp=temps.iloc[0].loc['set_temperature']
+        starttime=temps.iloc[0].loc['time_stamp']  
+        endtime=temps.iloc[len(temps)-1].loc['time_stamp']  
+        timepassed=(endtime-starttime).total_seconds()
+        doughtemp=temps.iloc[0].loc['real_temperature']
+        doughtempend=temps.iloc[len(temps)-1].loc['real_temperature']
+        dif=[]
+        closestk=0
+        closesttemp=0
+        temp=[]
+        for z in range(1,100000,1):
             
-    doughids.append(DoughID)
-    kvalue.append(closestk)
+            temp = (roomtemp+((doughtemp-roomtemp)*math.pow(math.e,-(z/10000000)*timepassed)))
+            dif.append(abs(temp-doughtempend))
+            if (abs(temp-doughtempend)<=0.0001):
+                closestk=z
+                break
+            if (abs(temp-doughtempend)<=abs(closesttemp-doughtempend)):
+                closestk=z
+                closesttemp=temp
+                
+        doughids.append(DoughID)
+        kvalue.append(closestk)
     
 pf =pd.DataFrame()
-pf['doug_id']= doughids
+pf['dough_id']= doughids
 pf['k_values']=kvalue
 
 pf.to_pickle(save)

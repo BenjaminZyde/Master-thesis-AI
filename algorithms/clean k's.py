@@ -20,5 +20,5 @@ for x in range(length):
     if (int(k)==99999):
         data.drop(index=length-x,axis=0,inplace=True)
         
-data.reset_index()
+data.reset_index(inplace=True, drop=True )
 data.to_pickle(save)
