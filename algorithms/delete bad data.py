@@ -6,7 +6,7 @@ Created on Sat Apr  1 17:50:09 2023
 """
 
 #dataframe creation
-#static data for one doughID
+#static data for one dough_id
 
 
 

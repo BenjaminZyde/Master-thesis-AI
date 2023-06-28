@@ -15,25 +15,47 @@ from sklearn import metrics
 
 
 sourcek = "../rearangeddata/new 3-01/beter-pandas-K_values-finalproof.pkl"
-sourcei = "../rearangeddata/new 3-01/ingredients.pkl"
-
+sourcei = "../rearangeddata/new 9-05/ingredients.pkl"
+sourceids= "../rearangeddata/new 3-01/beter-pandas-ids.pkl"
+save="../rearangeddata/new 9-05/output-regressor-k.pkl"
+dataids= pd.read_pickle(sourceids) 
 datak = pd.read_pickle(sourcek)
 datai = pd.read_pickle(sourcei)
 datax= pd.DataFrame()
 datay= pd.DataFrame()
+aa=[]   #Ascorbic acid
+f=[]    #flour
+s=[]    #salt
+sd=[]   #sourdough
+vg=[]   #vital gluten
+w=[]    #water
+y=[]    #yeast
 k=[]
-sourdough=[]
-water=[]
-for x in range(len(datak)):
-    di= datak.iloc[x].loc['dough_id']
+for x in range(len(dataids)):
+    di= dataids.iloc[x].loc['DoughID']
     ing= datai.query("dough_id == \"" +str(di) +"\"")
-    k.append(datak.iloc[x].loc['k_values'])
-    sourdough.append(ing.iloc[0].loc['sourdough'])
-    water.append(ing.iloc[0].loc['water'])
+    ks= datak.query("dough_id == \"" +str(di) +"\"")
+    if (len(ing) !=0 and len(ks)!=0):
+        k.append(ks.iloc[0].loc['k_values'])
+        aa.append(ing.iloc[0].loc['Ascorbic acid'])
+        f.append(ing.iloc[0].loc['Flour'])
+        s.append(ing.iloc[0].loc['Salt'])
+        sd.append(ing.iloc[0].loc['Sourdough'])
+        vg.append(ing.iloc[0].loc['Vital gluten'])
+        w.append(ing.iloc[0].loc['Water'])
+        y.append(ing.iloc[0].loc['Yeast'])
     
-
-#datax['sourdough']=sourdough
-datax['water']=water
+    
+    
+    
+    
+datax['Ascorbic acid']=aa
+datax['Flour']=f
+datax['Salt']=s
+datax['Sourdough']=sd
+datax['Vital gluten']=vg
+datax['Water']=w
+datax['Yeast']=y
 datay['k']=k
 
 
@@ -43,8 +65,15 @@ regressor = LinearRegression()
 regressor.fit(X_train, y_train) 
 
 y_pred = regressor.predict(X_test)
-
-
+saveids=[]
+for x in y_test.index:
+    saveids.append(datak.iloc[x].loc['dough_id'])
+output= pd.DataFrame()
+output['dough_id']=saveids
+y_test.reset_index(inplace=True)
+output['k']=y_test['k']
+output['prediction']=y_pred
+output.to_pickle(save)
 
 
 

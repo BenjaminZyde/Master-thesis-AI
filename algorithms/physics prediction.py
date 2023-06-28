@@ -21,7 +21,7 @@ temp=[]
 time*=60
 
 for x in range(time):
-    temp.append(roomtemp+((doughtemp-roomtemp)*math.pow(math.e,-0.0001279*x)))
+    temp.append(roomtemp+((doughtemp-roomtemp)*math.pow(math.e,-0.0001524*x)))
     
 pf =pd.DataFrame(temp)
 pd.to_pickle(pf,save)

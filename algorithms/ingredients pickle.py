@@ -6,21 +6,26 @@ Created on Sat May 27 18:02:16 2023
 """
 import pandas as pd
 
-design = "../data/new 3-01/design.csv"
-ingredients = "../rearangeddata/new 3-01/ingredients.pkl"
-datadesign =   pd.read_csv(design,delimiter=(";"))
+design = "../data/new 9-05/ingredients_conc_perc.csv"
+ingredients = "../rearangeddata/new 9-05/ingredients.pkl"
+ing=   pd.read_csv(design,delimiter=(";"))
 
-
+flour=[]
+sourdough=[]
 ingredient = pd.DataFrame()
 
-ingredient['dough_id'] = datadesign['dough_id']
-ingredient['sourdough'] = datadesign['FORM_sourdough_conc']
-ingredient['water'] = datadesign['FORM_water_conc']
+ing.dropna(axis=0,subset=['Water'],inplace=True)
+for x in range(len(ing)):
+    flour.append(float(ing.iloc[x].loc['Flour'])+float(ing.iloc[x].loc['Whole meal flour']))
+    sourdough.append(float(ing.iloc[x].loc['Sourdough'])+float(ing.iloc[x].loc['Sourdough blend']))
 
-
-
-ingredient.dropna(axis=0,subset=['dough_id'],inplace=True)
+del ing['Flour']
+del ing['Whole meal flour']
+del ing['Sourdough']
+del ing['Sourdough blend']
+ing['Flour']=flour
+ing['Sourdough']=sourdough
 ingredient.reset_index()
 
 
-ingredient.to_pickle(ingredients)
+ing.to_pickle(ingredients)

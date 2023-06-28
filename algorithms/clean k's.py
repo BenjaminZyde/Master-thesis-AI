@@ -11,14 +11,17 @@ source="../rearangeddata/new 3-01/pandas-K_values-finalproof.pkl"
 save="../rearangeddata/new 3-01/beter-pandas-K_values-finalproof.pkl"
 
 data= pd.read_pickle(source)
-doids=[]
-length= len(data)-1
-for x in range(length):
-    k=data.iloc[length-x].loc['k_values']
-    if (int(k)==1):
-        data.drop(index=length-x,axis=0,inplace=True)
-    if (int(k)==99999):
-        data.drop(index=length-x,axis=0,inplace=True)
-        
-data.reset_index(inplace=True, drop=True )
-data.to_pickle(save)
+goodid=[]
+goodk=[]
+
+for x in range(len(data)):
+    k=data.iloc[x].loc['k_values']
+    ids=data.iloc[x].loc['dough_id']
+    if (k!=1 and k!=99999):
+        goodid.append(ids)
+        goodk.append(k)
+output=pd.DataFrame()
+output['dough_id']=goodid
+output['k_values']=goodk
+output.reset_index(inplace=True, drop=True )
+output.to_pickle(save)

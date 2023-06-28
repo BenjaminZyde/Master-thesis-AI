@@ -21,7 +21,7 @@ def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
 #chose valid breadID
-DoughID="DO84"
+DoughID="DO113"
 #chose bread 1 or bread 2
 bread=1 #1/2
 
